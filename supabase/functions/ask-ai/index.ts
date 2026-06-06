@@ -4,8 +4,41 @@
 //  Requiere sesión iniciada (verify_jwt = true) para evitar abuso de créditos.
 // ============================================================================
 
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const MODEL = "gpt-4o-mini";
+
+// Registra la pregunta/respuesta del alumno (no rompe el chat si falla).
+async function registrarPregunta(
+  authHeader: string,
+  exerciseId: string | null,
+  question: string,
+  answer: string,
+) {
+  try {
+    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data } = await userClient.auth.getUser();
+    const uid = data?.user?.id;
+    if (!uid) return;
+    const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+    await admin.from("ai_questions").insert({
+      user_id: uid,
+      exercise_id: exerciseId,
+      question: question.slice(0, 4000),
+      answer: (answer || "").slice(0, 4000),
+    });
+  } catch (e) {
+    console.error("No se pudo registrar la pregunta:", e);
+  }
+}
 
 const ALLOWED_ORIGINS = [
   "https://progra-uai.pages.dev",
@@ -108,6 +141,10 @@ Deno.serve(async (req: Request) => {
 
     const data = await resp.json();
     const answer = data.choices?.[0]?.message?.content ?? "(sin respuesta)";
+
+    // Guarda la pregunta para que el profe vea quién necesita ayuda.
+    const authHeader = req.headers.get("Authorization") || "";
+    await registrarPregunta(authHeader, contexto.id || null, pregunta, answer);
 
     return new Response(JSON.stringify({ answer }), {
       headers: { ...cors, "Content-Type": "application/json" },

@@ -111,6 +111,11 @@ supabase config push --yes
 El frontend (`js/assistant.js`) llama a la función con `functions.invoke("ask-ai", ...)`
 mandando la pregunta + contexto del ejercicio actual (título, enunciado, código).
 
+**Registro de preguntas**: cada consulta se guarda en `public.ai_questions`
+(`user_id`, `exercise_id`, `question`, `answer`, `created_at`). La inserción la
+hace la función con `service_role` (RLS activo; el alumno solo puede leer las
+suyas). El panel admin usa esto para ver **quién necesita más ayuda y sobre qué**.
+
 ```bash
 # re-deploy de la función tras editarla
 supabase functions deploy ask-ai

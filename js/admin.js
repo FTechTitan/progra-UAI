@@ -122,6 +122,7 @@
         <tr>
           <td>${u.email || "—"} ${u.es_admin ? '<span class="tag-admin">admin</span>' : ""}</td>
           <td>${u.completados || 0}</td>
+          <td>${u.preguntas || 0}</td>
           <td>${fmtFecha(u.ultima_actividad)}</td>
           <td>${fmtFecha(u.creado)}</td>
           <td class="acciones">
@@ -135,6 +136,7 @@
       <div class="admin-cards">
         <div class="admin-card"><div class="num">${t.alumnos ?? 0}</div><div class="lbl">Alumnos registrados</div></div>
         <div class="admin-card"><div class="num">${t.ejercicios_completados ?? 0}</div><div class="lbl">Ejercicios completados (total)</div></div>
+        <div class="admin-card"><div class="num">${t.preguntas ?? 0}</div><div class="lbl">Preguntas al tutor 🤖</div></div>
       </div>
 
       <div class="admin-section-title">Completados por ejercicio</div>
@@ -142,8 +144,8 @@
 
       <div class="admin-section-title">Alumnos</div>
       <table class="admin-table">
-        <thead><tr><th>Email</th><th>Completados</th><th>Última actividad</th><th>Registro</th><th>Acciones</th></tr></thead>
-        <tbody>${filas || '<tr><td colspan="5" class="admin-loading">Sin alumnos.</td></tr>'}</tbody>
+        <thead><tr><th>Email</th><th>Completados</th><th>Preguntas 🤖</th><th>Última actividad</th><th>Registro</th><th>Acciones</th></tr></thead>
+        <tbody>${filas || '<tr><td colspan="6" class="admin-loading">Sin alumnos.</td></tr>'}</tbody>
       </table>
 
       <div id="adminDetalle"></div>`;
@@ -172,6 +174,8 @@
       return;
     }
     const prog = data.progreso || [];
+    const preguntas = data.preguntas || [];
+
     const items = prog.map((r) => `
       <details class="detail-ex">
         <summary>${r.completed ? "✅" : "⏳"} ${titulosEjercicios[r.exercise_id] || r.exercise_id}
@@ -179,9 +183,18 @@
         <pre>${escapar(r.code) || "(sin código)"}</pre>
       </details>`).join("") || '<p class="admin-loading">Este alumno todavía no tiene progreso.</p>';
 
+    const preguntasHtml = preguntas.map((q) => `
+      <details class="detail-ex">
+        <summary>❓ ${escapar(q.question).slice(0, 90)}${q.question.length > 90 ? "…" : ""}
+          <span class="dim" style="margin-left:auto;color:var(--text-dim)">${q.exercise_id ? (titulosEjercicios[q.exercise_id] || q.exercise_id) + " · " : ""}${fmtFecha(q.created_at)}</span></summary>
+        <pre style="white-space:pre-wrap"><b>Pregunta:</b> ${escapar(q.question)}\n\n<b>Respuesta del tutor:</b> ${escapar(q.answer) || "—"}</pre>
+      </details>`).join("") || '<p class="admin-loading">Este alumno no le hizo preguntas al tutor.</p>';
+
     cont.innerHTML = `<div class="admin-detail">
-      <div class="admin-section-title" style="margin-top:0">Detalle del alumno</div>
+      <div class="admin-section-title" style="margin-top:0">Progreso y código</div>
       ${items}
+      <div class="admin-section-title">Preguntas al tutor 🤖 (${preguntas.length})</div>
+      ${preguntasHtml}
     </div>`;
     cont.scrollIntoView({ behavior: "smooth", block: "start" });
   }

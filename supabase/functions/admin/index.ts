@@ -83,6 +83,15 @@ Deno.serve(async (req: Request) => {
         .select("user_id, exercise_id, completed, updated_at");
       if (e2) throw e2;
 
+      // Conteo de preguntas al tutor por usuario.
+      const { data: preguntas } = await admin
+        .from("ai_questions")
+        .select("user_id, created_at");
+      const preguntasPorUsuario: Record<string, number> = {};
+      (preguntas || []).forEach((q) => {
+        preguntasPorUsuario[q.user_id] = (preguntasPorUsuario[q.user_id] || 0) + 1;
+      });
+
       // Agregados por usuario y por ejercicio.
       const completadosPorUsuario: Record<string, number> = {};
       const ultimaActividad: Record<string, string> = {};
@@ -99,6 +108,7 @@ Deno.serve(async (req: Request) => {
       const usuariosEnriquecidos = usuarios.map((u) => ({
         ...u,
         completados: completadosPorUsuario[u.id] || 0,
+        preguntas: preguntasPorUsuario[u.id] || 0,
         ultima_actividad: ultimaActividad[u.id] || null,
       }));
 
@@ -106,6 +116,7 @@ Deno.serve(async (req: Request) => {
         totales: {
           alumnos: usuarios.length,
           ejercicios_completados: (prog || []).filter((r) => r.completed).length,
+          preguntas: (preguntas || []).length,
         },
         usuarios: usuariosEnriquecidos,
         por_ejercicio: porEjercicio,
@@ -122,7 +133,16 @@ Deno.serve(async (req: Request) => {
         .eq("user_id", userId)
         .order("updated_at", { ascending: false });
       if (error) throw error;
-      return json({ progreso: data || [] }, 200, headers);
+
+      // Preguntas que hizo este alumno al tutor.
+      const { data: preguntas } = await admin
+        .from("ai_questions")
+        .select("exercise_id, question, answer, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(200);
+
+      return json({ progreso: data || [], preguntas: preguntas || [] }, 200, headers);
     }
 
     // ----------------------------------------------------------------------

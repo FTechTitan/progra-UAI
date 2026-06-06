@@ -393,7 +393,7 @@
     window.AsistenteContexto = () => {
       if (!ejercicioActual) return {};
       const enunciado = (ejercicioActual.enunciado || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-      return { titulo: ejercicioActual.titulo, enunciado, codigo: editor.getValue() };
+      return { id: ejercicioActual.id, titulo: ejercicioActual.titulo, enunciado, codigo: editor.getValue() };
     };
 
     $("#btnRun").addEventListener("click", onRun);
