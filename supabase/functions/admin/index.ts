@@ -80,7 +80,7 @@ Deno.serve(async (req: Request) => {
       // Todo el progreso.
       const { data: prog, error: e2 } = await admin
         .from("progress")
-        .select("user_id, exercise_id, completed, updated_at");
+        .select("user_id, exercise_id, completed, updated_at, time_spent_seconds");
       if (e2) throw e2;
 
       // Conteo de preguntas al tutor por usuario.
@@ -109,13 +109,17 @@ Deno.serve(async (req: Request) => {
 
       // Agregados por usuario y por ejercicio.
       const completadosPorUsuario: Record<string, number> = {};
+      const completadosIdsPorUsuario: Record<string, string[]> = {};
+      const segundosPorUsuario: Record<string, number> = {};
       const ultimaActividad: Record<string, string> = {};
       const porEjercicio: Record<string, number> = {};
       (prog || []).forEach((r) => {
         if (r.completed) {
           completadosPorUsuario[r.user_id] = (completadosPorUsuario[r.user_id] || 0) + 1;
+          (completadosIdsPorUsuario[r.user_id] ||= []).push(r.exercise_id);
           porEjercicio[r.exercise_id] = (porEjercicio[r.exercise_id] || 0) + 1;
         }
+        segundosPorUsuario[r.user_id] = (segundosPorUsuario[r.user_id] || 0) + (r.time_spent_seconds || 0);
         const prev = ultimaActividad[r.user_id];
         if (!prev || (r.updated_at && r.updated_at > prev)) ultimaActividad[r.user_id] = r.updated_at;
       });
@@ -123,6 +127,8 @@ Deno.serve(async (req: Request) => {
       const usuariosEnriquecidos = usuarios.map((u) => ({
         ...u,
         completados: completadosPorUsuario[u.id] || 0,
+        completados_ids: completadosIdsPorUsuario[u.id] || [],
+        segundos: segundosPorUsuario[u.id] || 0,
         preguntas: preguntasPorUsuario[u.id] || 0,
         nota_ultima: ultimaNota[u.id] ?? null,
         nota_mejor: mejorNota[u.id] ?? null,
@@ -155,7 +161,7 @@ Deno.serve(async (req: Request) => {
       if (!userId) return json({ error: "Falta user_id" }, 400, headers);
       const { data, error } = await admin
         .from("progress")
-        .select("exercise_id, completed, code, updated_at")
+        .select("exercise_id, completed, code, updated_at, time_spent_seconds")
         .eq("user_id", userId)
         .order("updated_at", { ascending: false });
       if (error) throw error;

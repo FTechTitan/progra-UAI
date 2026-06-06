@@ -74,6 +74,15 @@ const ProgresoRemoto = {
     const { error } = await sb.from("progress").upsert(fila, { onConflict: "user_id,exercise_id" });
     if (error) throw error;
   },
+
+  // Suma segundos de tiempo activo al ejercicio (vía RPC; el server usa auth.uid()).
+  async sumarTiempo(exerciseId, segundos) {
+    const { error } = await sb.rpc("add_time_spent", {
+      p_exercise_id: exerciseId,
+      p_seconds: Math.round(segundos),
+    });
+    if (error) throw error;
+  },
 };
 
 window.Auth = Auth;

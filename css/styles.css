@@ -407,6 +407,12 @@ body {
 .ex-bar-track { background: var(--bg-card); border-radius: 99px; height: 12px; overflow: hidden; }
 .ex-bar-fill { height: 100%; background: linear-gradient(90deg, var(--py-blue), var(--py-yellow)); }
 
+/* Celda de % de avance en la tabla de alumnos */
+.avance-cell { display: flex; flex-direction: column; gap: 3px; min-width: 120px; }
+.avance-track { background: var(--bg-card); border-radius: 99px; height: 8px; overflow: hidden; }
+.avance-fill { height: 100%; border-radius: 99px; }
+.avance-num { font-size: 12px; white-space: nowrap; }
+
 .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .admin-table th, .admin-table td {
   text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border);

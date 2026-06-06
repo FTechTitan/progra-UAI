@@ -473,6 +473,54 @@
     }
   }
 
+  // --- Heartbeat de tiempo dedicado ----------------------------------------
+  // Cuenta segundos de actividad REAL en el ejercicio abierto (pestaña visible
+  // + interacción reciente) y los acumula en la nube vía RPC. El panel admin lo
+  // usa para mostrar cuántas horas le dedicó cada alumno. Solo cuenta logueado.
+  const HEARTBEAT_TICK_S = 15;   // cada cuántos segundos suma un "tick"
+  const HEARTBEAT_IDLE_S = 120;  // sin interacción => se considera inactivo (no cuenta)
+  const HEARTBEAT_FLUSH_S = 60;  // segundos acumulados antes de mandar a la nube
+  const tiempoPendiente = {};    // exercise_id -> segundos sin enviar
+  let ultimaInteraccion = Date.now();
+
+  function marcarInteraccion() { ultimaInteraccion = Date.now(); }
+
+  function flushTiempo() {
+    if (!usuarioActual) {
+      Object.keys(tiempoPendiente).forEach((k) => delete tiempoPendiente[k]);
+      return;
+    }
+    Object.keys(tiempoPendiente).forEach((id) => {
+      const secs = tiempoPendiente[id];
+      delete tiempoPendiente[id];
+      if (secs > 0) {
+        window.ProgresoRemoto.sumarTiempo(id, secs)
+          .catch((e) => console.warn("No se pudo guardar tiempo:", e.message || e));
+      }
+    });
+  }
+
+  function iniciarHeartbeat() {
+    ["keydown", "mousedown", "mousemove", "touchstart", "wheel"].forEach((ev) =>
+      document.addEventListener(ev, marcarInteraccion, { passive: true }));
+
+    setInterval(() => {
+      if (!usuarioActual || !ejercicioActual) return;
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - ultimaInteraccion > HEARTBEAT_IDLE_S * 1000) return;
+      const id = ejercicioActual.id;
+      tiempoPendiente[id] = (tiempoPendiente[id] || 0) + HEARTBEAT_TICK_S;
+      const totalPend = Object.values(tiempoPendiente).reduce((a, b) => a + b, 0);
+      if (totalPend >= HEARTBEAT_FLUSH_S) flushTiempo();
+    }, HEARTBEAT_TICK_S * 1000);
+
+    // Manda lo pendiente al ocultar la pestaña o cerrar (best-effort).
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flushTiempo();
+    });
+    window.addEventListener("beforeunload", flushTiempo);
+  }
+
   // --- Carga inicial de Pyodide en segundo plano ---------------------------
   async function precargarPython() {
     try {
@@ -524,6 +572,7 @@
     $("#btnNext").addEventListener("click", onNext);
     $("#btnReset").addEventListener("click", onReset);
 
+    iniciarHeartbeat();
     precargarPython();
   }
 
