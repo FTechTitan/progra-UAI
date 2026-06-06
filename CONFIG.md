@@ -195,7 +195,7 @@ Orbe animado que conversa por **voz en tiempo real** (escucha y responde habland
 |---------|---------|
 | Tecnología | ElevenLabs Conversational AI (widget embebible) |
 | Agente | `agent_5101ktde7saxeews5gr563y7pyfq` ("Tutor Python · progra-UAI") |
-| Voz | `ExrPIBXPOXJtXkGzsNzf` (latina, casual) · modelo `eleven_flash_v2_5` |
+| Voz | `6Gr4AVmTax1pMJO0lHRK` (**Catalina — español chileno**, premade/biblioteca, free) · modelo `eleven_flash_v2_5` |
 | LLM | `gpt-4o-mini` |
 | Embed | `<elevenlabs-convai agent-id="...">` + `@elevenlabs/convai-widget-embed` (en `index.html`) |
 | Posición | abajo-izquierda (la "pelota") · orbe azul/púrpura |
