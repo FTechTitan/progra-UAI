@@ -112,10 +112,12 @@
   const exercise = $("#exercise");
   const outputEl = $("#output");
   const pyStatus = $("#pyStatus");
+  const mediaPanel = $("#media");
 
   let editor = null;       // instancia de CodeMirror
   let ejercicioActual = null;
   let indiceActual = -1;
+  let mediaActual = null;  // id de la clase de media abierta ("curso" o moduloId)
 
   // --- Inicializa el editor CodeMirror -------------------------------------
   function initEditor() {
@@ -139,6 +141,21 @@
     sidebar.innerHTML = "";
     let globalIndex = 0;
 
+    // Clase del curso en audio (podcast general). Siempre accesible: es material
+    // de estudio, no se bloquea por progreso como los ejercicios.
+    if (window.COURSE_MEDIA && window.COURSE_MEDIA.audio) {
+      const cm = window.COURSE_MEDIA;
+      const cmItem = document.createElement("div");
+      cmItem.className = "ej-item media-link";
+      if (mediaActual === "curso") cmItem.classList.add("activo");
+      cmItem.innerHTML = `
+        <span class="estado">🎧</span>
+        <span class="nombre">${cm.titulo}</span>
+        <span class="nivel-dots">audio</span>`;
+      cmItem.addEventListener("click", abrirMediaCurso);
+      sidebar.appendChild(cmItem);
+    }
+
     modulos.forEach((modulo) => {
       const completadosModulo = modulo.ejercicios.filter((e) => estado.completados[e.id]).length;
 
@@ -150,6 +167,20 @@
       header.innerHTML = `<span class="emoji">${modulo.emoji}</span> ${modulo.titulo}
         <span class="modulo-progress">${completadosModulo}/${modulo.ejercicios.length}</span>`;
       divMod.appendChild(header);
+
+      // Clase en video/audio del módulo (si tiene). Libre, no se bloquea.
+      if (modulo.media && (modulo.media.video || modulo.media.audio)) {
+        const esVideo = !!modulo.media.video;
+        const mItem = document.createElement("div");
+        mItem.className = "ej-item media-link";
+        if (mediaActual === modulo.id) mItem.classList.add("activo");
+        mItem.innerHTML = `
+          <span class="estado">${esVideo ? "📺" : "🎧"}</span>
+          <span class="nombre">Clase en ${esVideo ? "video" : "audio"}</span>
+          <span class="nivel-dots">${esVideo ? "video" : "audio"}</span>`;
+        mItem.addEventListener("click", () => abrirMediaModulo(modulo.id));
+        divMod.appendChild(mItem);
+      }
 
       modulo.ejercicios.forEach((ej) => {
         const idx = globalIndex++;
@@ -189,6 +220,91 @@
     $("#progresoTexto").textContent = `${hechos} / ${total}`;
   }
 
+  // --- Clases en audio/video -----------------------------------------------
+  // Construye los reproductores dentro de `cont`. Cada item es
+  // { kind: "video"|"audio", src, label }. Si el archivo no existe todavía
+  // (aún generándose / no subido), el <video|audio> dispara "error" y se
+  // muestra un aviso de "próximamente" en su lugar, sin romper la página.
+  function pintarReproductores(cont, items) {
+    cont.innerHTML = items
+      .map(
+        (it, i) => `
+      <div class="media-card" data-i="${i}">
+        <div class="media-card-label">${it.kind === "video" ? "📺" : "🎧"} ${it.label}</div>
+        <div class="media-slot">
+          ${
+            it.kind === "video"
+              ? `<video class="media-el" controls preload="metadata" playsinline></video>`
+              : `<audio class="media-el" controls preload="metadata"></audio>`
+          }
+          <div class="media-pending hidden">
+            🎬 <b>Próximamente.</b> Esta clase se está generando.
+            Volvé a entrar en un rato.
+          </div>
+        </div>
+        <a class="media-dl" href="${it.src}" download>⬇ Descargar</a>
+      </div>`
+      )
+      .join("");
+
+    cont.querySelectorAll(".media-card").forEach((card, i) => {
+      const el = card.querySelector(".media-el");
+      const pend = card.querySelector(".media-pending");
+      const dl = card.querySelector(".media-dl");
+      el.addEventListener("error", () => {
+        el.classList.add("hidden");
+        dl.classList.add("hidden");
+        pend.classList.remove("hidden");
+      });
+      el.src = items[i].src; // setear src después del listener para captar el error
+    });
+  }
+
+  // Muestra el panel de media y oculta welcome/ejercicio.
+  function mostrarPanelMedia(badge, titulo, subHtml, items, teoriaHtml, claveActiva) {
+    ejercicioActual = null;
+    indiceActual = -1;
+    mediaActual = claveActiva;
+
+    welcome.classList.add("hidden");
+    exercise.classList.add("hidden");
+    mediaPanel.classList.remove("hidden");
+
+    $("#mediaBadge").textContent = badge;
+    $("#mediaTitulo").textContent = titulo;
+    $("#mediaSub").innerHTML = subHtml || "";
+    $("#mediaTeoria").innerHTML = teoriaHtml || "";
+    pintarReproductores($("#mediaPlayers"), items);
+
+    renderSidebar();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function abrirMediaCurso() {
+    const cm = window.COURSE_MEDIA;
+    if (!cm) return;
+    const items = [];
+    if (cm.audio) items.push({ kind: "audio", src: cm.audio, label: "Podcast del curso" });
+    if (cm.video) items.push({ kind: "video", src: cm.video, label: "Video del curso" });
+    mostrarPanelMedia("🎧 Clase del curso", cm.titulo, cm.sub, items, "", "curso");
+  }
+
+  function abrirMediaModulo(moduloId) {
+    const modulo = modulos.find((m) => m.id === moduloId);
+    if (!modulo || !modulo.media) return;
+    const items = [];
+    if (modulo.media.video) items.push({ kind: "video", src: modulo.media.video, label: `Video · ${modulo.titulo}` });
+    if (modulo.media.audio) items.push({ kind: "audio", src: modulo.media.audio, label: `Audio · ${modulo.titulo}` });
+    mostrarPanelMedia(
+      `${modulo.emoji} ${modulo.titulo}`,
+      `Clase: ${modulo.titulo}`,
+      modulo.intro,
+      items,
+      modulo.teoria,
+      modulo.id
+    );
+  }
+
   // --- Abre un ejercicio en el workspace -----------------------------------
   function abrirEjercicio(index) {
     const ej = ejerciciosPlanos[index];
@@ -196,8 +312,10 @@
 
     ejercicioActual = ej;
     indiceActual = index;
+    mediaActual = null;
 
     welcome.classList.add("hidden");
+    mediaPanel.classList.add("hidden");
     exercise.classList.remove("hidden");
 
     $("#exModulo").textContent = ej.moduloTitulo;
@@ -388,6 +506,11 @@
 
     // Sincroniza con la nube cuando cambia la sesión (login/logout).
     if (window.AuthUI) window.AuthUI.onUsuario(sincronizarConRemoto);
+
+    // Expone el progreso para el modo prueba (saber qué módulos están completos).
+    window.ProgresoApp = {
+      completados: () => ({ ...estado.completados }),
+    };
 
     // Expone el contexto del ejercicio actual para el asistente de IA.
     window.AsistenteContexto = () => {

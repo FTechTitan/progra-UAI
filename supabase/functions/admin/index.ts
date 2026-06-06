@@ -92,6 +92,21 @@ Deno.serve(async (req: Request) => {
         preguntasPorUsuario[q.user_id] = (preguntasPorUsuario[q.user_id] || 0) + 1;
       });
 
+      // Resultados de pruebas: última nota, mejor nota e intentos por usuario.
+      const { data: examenes } = await admin
+        .from("exam_results")
+        .select("user_id, nota, created_at")
+        .order("created_at", { ascending: false });
+      const ultimaNota: Record<string, number> = {};
+      const mejorNota: Record<string, number> = {};
+      const intentos: Record<string, number> = {};
+      (examenes || []).forEach((e) => {
+        const n = Number(e.nota);
+        if (ultimaNota[e.user_id] === undefined) ultimaNota[e.user_id] = n; // primero = más reciente
+        mejorNota[e.user_id] = Math.max(mejorNota[e.user_id] ?? 0, n);
+        intentos[e.user_id] = (intentos[e.user_id] || 0) + 1;
+      });
+
       // Agregados por usuario y por ejercicio.
       const completadosPorUsuario: Record<string, number> = {};
       const ultimaActividad: Record<string, string> = {};
@@ -109,14 +124,25 @@ Deno.serve(async (req: Request) => {
         ...u,
         completados: completadosPorUsuario[u.id] || 0,
         preguntas: preguntasPorUsuario[u.id] || 0,
+        nota_ultima: ultimaNota[u.id] ?? null,
+        nota_mejor: mejorNota[u.id] ?? null,
+        intentos_prueba: intentos[u.id] || 0,
         ultima_actividad: ultimaActividad[u.id] || null,
       }));
+
+      // Promedio de la última nota de cada alumno que rindió.
+      const notas = Object.values(ultimaNota);
+      const promedioNotas = notas.length
+        ? Math.round((notas.reduce((a, b) => a + b, 0) / notas.length) * 10) / 10
+        : null;
 
       return json({
         totales: {
           alumnos: usuarios.length,
           ejercicios_completados: (prog || []).filter((r) => r.completed).length,
           preguntas: (preguntas || []).length,
+          pruebas_rendidas: (examenes || []).length,
+          promedio_notas: promedioNotas,
         },
         usuarios: usuariosEnriquecidos,
         por_ejercicio: porEjercicio,
@@ -142,7 +168,15 @@ Deno.serve(async (req: Request) => {
         .order("created_at", { ascending: false })
         .limit(200);
 
-      return json({ progreso: data || [], preguntas: preguntas || [] }, 200, headers);
+      // Resultados de pruebas de este alumno.
+      const { data: examenes } = await admin
+        .from("exam_results")
+        .select("exam_id, version, logro, nota, detalle, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      return json({ progreso: data || [], preguntas: preguntas || [], examenes: examenes || [] }, 200, headers);
     }
 
     // ----------------------------------------------------------------------

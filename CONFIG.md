@@ -159,6 +159,34 @@ where email = 'alguien@mail.com';
 > Verificado: alumno normal → **403**; admin → ve todo. La `service_role` nunca
 > sale del backend.
 
+## 📝 Pruebas predictivas (predicción de nota)
+
+Modo examen para estimar la nota que el alumno sacaría en la prueba real en papel,
+hecho **sin tutor ni pistas**.
+
+| Aspecto | Detalle |
+|---------|---------|
+| Datos | `js/exams.js` — `Prueba 2` con 3 versiones paralelas **A/B/C** (al azar) |
+| Materia | ciclos, ciclos anidados, listas, matrices (4 problemas c/u) |
+| Desbloqueo | solo al **completar los módulos** requeridos |
+| Modo | sin tutor (se oculta), sin pistas, sin "Comprobar" por problema; timer |
+| Corrección | crédito parcial = `puntos × casos_ok / casos_total` (Pyodide en el browser) |
+| Nota | escala chilena **1.0–7.0 al 60%** (`logroANota`) |
+| Frontend | `js/exam-ui.js` (botón "📝 Prueba" en la topbar) |
+
+**Tabla `public.exam_results`**: `user_id`, `exam_id`, `version`, `logro`,
+`nota`, `detalle` (jsonb por problema), `created_at`. RLS: el alumno **inserta y
+lee solo lo suyo**, no puede editar ni borrar (historial inmutable). Verificado:
+falsear `user_id` → 403.
+
+**En el panel admin**: tarjeta "Nota predicha promedio", columna de nota por
+alumno (última + mejor + intentos) y el detalle de cada prueba rendida.
+
+> ⚠️ La corrección corre en el navegador (como todo el resto de la app). Es una
+> herramienta de **autoevaluación/predicción**, no una prueba calificada oficial.
+
+Validado: soluciones de referencia de los 12 problemas → 100% → nota 7.0.
+
 ## 🚀 Flujo de actualización
 
 ```bash

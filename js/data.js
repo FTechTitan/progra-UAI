@@ -12,6 +12,12 @@
 //  así el alumno no pierde por escribir "Es Positivo" vs "es positivo".
 // ============================================================================
 
+// Base pública del bucket de Storage (Supabase) donde viven los videos/audios.
+// Los archivos pesados NO van al repo (límite 25 MiB de Cloudflare Pages); se
+// sirven desde el CDN de Supabase. Cambiar solo esta línea si se migra de host.
+const MEDIA_BASE =
+  "https://bipsvhxsvfzfwzufucfg.supabase.co/storage/v1/object/public/media";
+
 const CURRICULUM = [
   // ==========================================================================
   // MÓDULO 1 — CONDICIONALES
@@ -20,6 +26,7 @@ const CURRICULUM = [
     id: "condicionales",
     titulo: "Condicionales",
     emoji: "🔀",
+    media: { video: MEDIA_BASE + "/condicionales.mp4" },
     intro:
       "Los condicionales le dan <b>inteligencia</b> al programa: permiten decidir " +
       "qué instrucciones ejecutar según una condición lógica (<code>if</code>, " +
@@ -156,6 +163,7 @@ Fahrenheit, conviértelo a Celsius con la fórmula:</p>
     id: "ciclos",
     titulo: "Ciclos",
     emoji: "🔁",
+    media: { video: MEDIA_BASE + "/ciclos.mp4" },
     intro:
       "Un ciclo permite <b>repetir</b> instrucciones. Python tiene dos: " +
       "<code>while</code> (repite mientras se cumpla una condición) y " +
@@ -306,6 +314,7 @@ derecho y al revés, ej: 131, 7887). Muestra <code>Es palindromo</code> o
     id: "listas",
     titulo: "Listas",
     emoji: "📋",
+    media: { video: MEDIA_BASE + "/listas.mp4" },
     intro:
       "Una <b>lista</b> agrupa muchos valores en una sola variable. Se accede a " +
       "cada elemento por su <b>índice</b> (empezando en 0).",
@@ -724,5 +733,21 @@ M = []
   },
 ];
 
+// ============================================================================
+//  Media del curso — clases en audio/video generadas con NotebookLM.
+//  COURSE_MEDIA es el podcast general (cubre todo el curso). Cada módulo puede
+//  además declarar su propia `media: { video, audio }` (ver arriba). Los
+//  archivos viven en media/ y se cargan de forma perezosa; si todavía no
+//  existen, la app muestra un aviso de "próximamente" sin romperse.
+// ============================================================================
+const COURSE_MEDIA = {
+  titulo: "Podcast del curso",
+  sub:
+    "Repaso técnico en audio de toda la materia: condicionales, ciclos y " +
+    "listas, con sintaxis, ejemplos y errores comunes.",
+  audio: MEDIA_BASE + "/curso-podcast.mp3",
+};
+
 // Expuesto globalmente para los otros scripts (sin módulos ES, todo via <script>)
 window.CURRICULUM = CURRICULUM;
+window.COURSE_MEDIA = COURSE_MEDIA;

@@ -304,6 +304,73 @@ body {
   .workspace { padding: 18px; }
 }
 
+/* ---------- Botón Prueba (topbar) ---------- */
+.btn-prueba {
+  background: linear-gradient(135deg, #f6a609, #f25c54); color: #fff;
+  border: none; border-radius: 8px; padding: 6px 14px; font-size: 13px;
+  font-weight: 700; cursor: pointer; margin-right: 8px;
+}
+.btn-prueba:hover { filter: brightness(1.08); }
+
+/* Intro de prueba */
+.prueba-previa { background: var(--green-soft); border: 1px solid var(--border);
+  padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+.prueba-reqs { background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px; margin: 14px 0; }
+.prueba-reqs-title { font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
+.prueba-reqs ul, .prueba-rules { list-style: none; padding: 0; margin: 0; font-size: 14px; }
+.prueba-reqs li, .prueba-rules li { padding: 3px 0; }
+.prueba-rules { margin: 10px 0 16px; }
+.prueba-aviso { color: var(--py-yellow); font-size: 14px; }
+
+/* Overlay de examen */
+.exam-overlay {
+  position: fixed; inset: 0; background: var(--bg); z-index: 300; overflow-y: auto;
+}
+.exam-top {
+  position: sticky; top: 0; z-index: 2; display: flex; align-items: center;
+  justify-content: space-between; padding: 14px 28px; background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+}
+.exam-top h2 { margin: 0; font-size: 19px; }
+.exam-sub { font-size: 13px; color: var(--text-dim); }
+.exam-top-right { display: flex; align-items: center; gap: 14px; }
+.exam-timer {
+  font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--py-yellow);
+  background: var(--bg-card); padding: 4px 12px; border-radius: 8px; min-width: 84px; text-align: center;
+}
+.exam-timer.urgente { color: var(--red); animation: aiblink 1s infinite; }
+
+.exam-body { max-width: 880px; margin: 0 auto; padding: 22px 24px 60px; }
+.exam-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 20px; margin-bottom: 20px;
+}
+.exam-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.exam-num { font-weight: 700; color: var(--text-dim); font-size: 13px; }
+.exam-card h3 { margin: 4px 0 10px; font-size: 18px; }
+.exam-editor-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 8px; }
+.exam-actions { display: flex; align-items: center; gap: 12px; margin: 10px 0 8px; flex-wrap: wrap; }
+.exam-hint-text { font-size: 12px; color: var(--text-dim); }
+.exam-out { min-height: 36px; font-size: 13px; }
+
+/* Resultado */
+.exam-result { max-width: 620px; margin: 30px auto; text-align: center; }
+.nota-circle {
+  width: 160px; height: 160px; border-radius: 50%; margin: 0 auto 18px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 6px solid;
+}
+.nota-circle.ok { border-color: var(--green); background: var(--green-soft); }
+.nota-circle.fail { border-color: var(--red); background: var(--red-soft); }
+.nota-num { font-size: 52px; font-weight: 800; line-height: 1; }
+.nota-lbl { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+.nota-msg { font-size: 16px; margin: 6px 0; }
+.nota-logro { color: var(--text-dim); }
+.nota-disclaimer { font-size: 13px; color: var(--text-dim); margin-top: 16px;
+  background: var(--bg-soft); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
+.exam-result-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+
 /* ---------- Botón Admin (topbar) ---------- */
 .btn-admin {
   background: linear-gradient(135deg, #e056fd, #686de0); color: #fff;
@@ -469,3 +536,47 @@ body {
   animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Clases en audio/video (panel de media) ---------- */
+.media-panel { max-width: 760px; }
+.media-head { margin-bottom: 18px; }
+.media-head h2 { margin: 8px 0 6px; font-size: 24px; }
+.media-sub { color: var(--text-dim); margin: 0; font-size: 15px; }
+.media-sub code, .media-teoria code { font-family: var(--mono); font-size: .92em; }
+
+.media-players { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+.media-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+}
+.media-card-label { font-weight: 600; margin-bottom: 10px; font-size: 14px; }
+.media-slot { position: relative; }
+.media-el { width: 100%; display: block; border-radius: 8px; background: #000; }
+video.media-el { aspect-ratio: 16 / 9; }
+audio.media-el { height: 44px; background: var(--bg-soft); }
+.media-pending {
+  padding: 28px 16px; text-align: center; color: var(--text-dim);
+  background: var(--bg-soft); border: 1px dashed var(--border);
+  border-radius: 8px; font-size: 14px; line-height: 1.7;
+}
+.media-dl {
+  display: inline-block; margin-top: 10px; font-size: 13px;
+  color: var(--py-blue-light); text-decoration: none;
+}
+.media-dl:hover { text-decoration: underline; }
+
+.media-teoria {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 2px 20px 10px;
+}
+.media-teoria pre {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px; overflow-x: auto;
+}
+
+/* Entradas de media en el sidebar (no se bloquean) */
+.ej-item.media-link { color: var(--py-blue-light); }
+.ej-item.media-link .nivel-dots {
+  color: var(--text-dim); text-transform: uppercase;
+  font-size: 9px; letter-spacing: .5px;
+}

@@ -65,6 +65,15 @@
     return iso.slice(0, 10);
   }
 
+  // Celda de nota: muestra la última, con color según aprobado, y mejor/intentos.
+  function notaCell(u) {
+    if (u.nota_ultima == null) return '<span class="dim" style="color:var(--text-dim)">—</span>';
+    const n = Number(u.nota_ultima);
+    const color = n >= 4 ? "var(--green)" : "var(--red)";
+    const extra = u.intentos_prueba > 1 ? ` <span class="dim" style="color:var(--text-dim);font-size:11px">(mejor ${Number(u.nota_mejor).toFixed(1)}, ${u.intentos_prueba} int.)</span>` : "";
+    return `<b style="color:${color}">${n.toFixed(1)}</b>${extra}`;
+  }
+
   function abrirPanel() {
     let ov = document.getElementById("adminOverlay");
     if (!ov) {
@@ -123,6 +132,7 @@
           <td>${u.email || "—"} ${u.es_admin ? '<span class="tag-admin">admin</span>' : ""}</td>
           <td>${u.completados || 0}</td>
           <td>${u.preguntas || 0}</td>
+          <td>${notaCell(u)}</td>
           <td>${fmtFecha(u.ultima_actividad)}</td>
           <td>${fmtFecha(u.creado)}</td>
           <td class="acciones">
@@ -137,6 +147,7 @@
         <div class="admin-card"><div class="num">${t.alumnos ?? 0}</div><div class="lbl">Alumnos registrados</div></div>
         <div class="admin-card"><div class="num">${t.ejercicios_completados ?? 0}</div><div class="lbl">Ejercicios completados (total)</div></div>
         <div class="admin-card"><div class="num">${t.preguntas ?? 0}</div><div class="lbl">Preguntas al tutor 🤖</div></div>
+        <div class="admin-card"><div class="num">${t.promedio_notas != null ? t.promedio_notas.toFixed(1) : "—"}</div><div class="lbl">Nota predicha promedio 📝</div></div>
       </div>
 
       <div class="admin-section-title">Completados por ejercicio</div>
@@ -144,8 +155,8 @@
 
       <div class="admin-section-title">Alumnos</div>
       <table class="admin-table">
-        <thead><tr><th>Email</th><th>Completados</th><th>Preguntas 🤖</th><th>Última actividad</th><th>Registro</th><th>Acciones</th></tr></thead>
-        <tbody>${filas || '<tr><td colspan="6" class="admin-loading">Sin alumnos.</td></tr>'}</tbody>
+        <thead><tr><th>Email</th><th>Completados</th><th>Preguntas 🤖</th><th>Nota predicha 📝</th><th>Última actividad</th><th>Registro</th><th>Acciones</th></tr></thead>
+        <tbody>${filas || '<tr><td colspan="7" class="admin-loading">Sin alumnos.</td></tr>'}</tbody>
       </table>
 
       <div id="adminDetalle"></div>`;
@@ -175,6 +186,7 @@
     }
     const prog = data.progreso || [];
     const preguntas = data.preguntas || [];
+    const examenes = data.examenes || [];
 
     const items = prog.map((r) => `
       <details class="detail-ex">
@@ -190,8 +202,22 @@
         <pre style="white-space:pre-wrap"><b>Pregunta:</b> ${escapar(q.question)}\n\n<b>Respuesta del tutor:</b> ${escapar(q.answer) || "—"}</pre>
       </details>`).join("") || '<p class="admin-loading">Este alumno no le hizo preguntas al tutor.</p>';
 
+    const examenesHtml = examenes.map((e) => {
+      const n = Number(e.nota);
+      const color = n >= 4 ? "var(--green)" : "var(--red)";
+      const det = (e.detalle || []).map((d) =>
+        `${d.tema}: ${d.ganados}/${d.puntos} (${d.casos})`).join(" · ");
+      return `<details class="detail-ex">
+        <summary>📝 ${e.exam_id} v${e.version} — <b style="color:${color}">nota ${n.toFixed(1)}</b>
+          <span class="dim" style="margin-left:auto;color:var(--text-dim)">logro ${Number(e.logro).toFixed(0)}% · ${fmtFecha(e.created_at)}</span></summary>
+        <pre style="white-space:pre-wrap">${escapar(det) || "(sin detalle)"}</pre>
+      </details>`;
+    }).join("") || '<p class="admin-loading">Todavía no rindió ninguna prueba.</p>';
+
     cont.innerHTML = `<div class="admin-detail">
-      <div class="admin-section-title" style="margin-top:0">Progreso y código</div>
+      <div class="admin-section-title" style="margin-top:0">Pruebas rendidas 📝 (${examenes.length})</div>
+      ${examenesHtml}
+      <div class="admin-section-title">Progreso y código</div>
       ${items}
       <div class="admin-section-title">Preguntas al tutor 🤖 (${preguntas.length})</div>
       ${preguntasHtml}
