@@ -64,6 +64,15 @@ Cada rama/PR distinta de `main` genera un **preview deployment** automático.
 | Región | East US (North Virginia) |
 | Publishable key (frontend, pública por RLS) | `sb_publishable_nsfpKRfcdisP31bYOAumeg_DimCZ5tC` |
 | Estado | ✅ Login + progreso funcionando (verificado end-to-end) |
+| Acceso Supabase CLI | ✅ Confirmado — proyecto **LINKED** y operable desde este PC |
+
+**Acceso del Supabase CLI** (verificado 2026-06-05): este equipo tiene el CLI
+autenticado con acceso a la org `owtxxifoypdiebisgqbk` y el proyecto vinculado
+(`supabase projects list` muestra **Progra UAI** como LINKED ●). El access token
+**no vive en `~/.supabase/access-token`** sino en el **keyring del sistema**, por
+eso un `ls` de ese archivo no lo encuentra aunque el acceso funcione. No hace falta
+`supabase login` ni `SUPABASE_ACCESS_TOKEN` en este PC; el deploy de funciones y el
+push de config funcionan directo.
 
 **Auth**: email + contraseña, **sin confirmación de email** (auto-confirm), signup abierto.
 Site URL → `https://progra-uai.pages.dev`.
