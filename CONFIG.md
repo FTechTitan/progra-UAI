@@ -187,6 +187,33 @@ alumno (última + mejor + intentos) y el detalle de cada prueba rendida.
 
 Validado: soluciones de referencia de los 12 problemas → 100% → nota 7.0.
 
+## 🎙️ Tutor por voz (ElevenLabs Conversational AI — la "pelota")
+
+Orbe animado que conversa por **voz en tiempo real** (escucha y responde hablando).
+
+| Aspecto | Detalle |
+|---------|---------|
+| Tecnología | ElevenLabs Conversational AI (widget embebible) |
+| Agente | `agent_5101ktde7saxeews5gr563y7pyfq` ("Tutor Python · progra-UAI") |
+| Voz | `ExrPIBXPOXJtXkGzsNzf` (latina, casual) · modelo `eleven_flash_v2_5` |
+| LLM | `gpt-4o-mini` |
+| Embed | `<elevenlabs-convai agent-id="...">` + `@elevenlabs/convai-widget-embed` (en `index.html`) |
+| Posición | abajo-izquierda (la "pelota") · orbe azul/púrpura |
+| Materia | mismas restricciones que el tutor de texto (solo lo visto en el curso) |
+
+**Seguridad**: el widget usa **solo el `agent-id` (público)**. La **API key de
+ElevenLabs NUNCA va al frontend ni al repo** — se usó una sola vez para crear y
+configurar el agente. Allowlist de orígenes seteada a los dominios del sitio.
+
+```bash
+# gestionar el agente (requiere la API key vía header xi-api-key, NO en el repo)
+curl https://api.elevenlabs.io/v1/convai/agents/agent_5101ktde7saxeews5gr563y7pyfq \
+  -H "xi-api-key: $ELEVENLABS_KEY"
+```
+
+> ⚠️ La API key de ElevenLabs se compartió en chat → **rotar** en elevenlabs.io.
+> Cuenta **free** (incluye minutos limitados de ConvAI).
+
 ## 🚀 Flujo de actualización
 
 ```bash
