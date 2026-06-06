@@ -530,6 +530,11 @@ body {
 }
 .ai-input button:disabled { opacity: .5; cursor: not-allowed; }
 
+/* Botón de micrófono: neutro en reposo, rojo pulsante mientras graba */
+#aiMic { background: var(--bg-soft, #1a1d27); color: var(--text); border: 1px solid var(--border); }
+#aiMic.grabando { background: var(--red, #e5484d); color: #fff; border-color: transparent; animation: micPulse 1s ease-in-out infinite; }
+@keyframes micPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(229,72,77,.5); } 50% { box-shadow: 0 0 0 6px rgba(229,72,77,0); } }
+
 @media (max-width: 760px) {
   .ai-fab-text { display: none; }
   .ai-panel { bottom: 0; right: 0; width: 100vw; height: 100vh;

@@ -433,3 +433,9 @@ entrypoint = "./functions/admin/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/admin/*.html" ]
+
+[functions.transcribe]
+enabled = true
+verify_jwt = true
+import_map = "./functions/transcribe/deno.json"
+entrypoint = "./functions/transcribe/index.ts"
