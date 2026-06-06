@@ -35,6 +35,68 @@
 
   const estado = cargarProgreso();
 
+  // Usuario logueado (null = invitado, progreso solo local).
+  let usuarioActual = null;
+  // Debounce por ejercicio para no spamear la DB al tipear código.
+  const debouncersCodigo = {};
+
+  // Empuja una fila de progreso a Supabase si hay sesión (silencioso si no).
+  function pushRemoto(exerciseId, payload) {
+    if (!usuarioActual) return;
+    window.ProgresoRemoto
+      .guardar(usuarioActual.id, exerciseId, payload)
+      .catch((e) => console.warn("No se pudo guardar en la nube:", e.message || e));
+  }
+
+  // Guarda el código de un ejercicio en la nube, con debounce de 1.2s.
+  function pushCodigoDebounced(exerciseId, code) {
+    if (!usuarioActual) return;
+    clearTimeout(debouncersCodigo[exerciseId]);
+    debouncersCodigo[exerciseId] = setTimeout(() => {
+      pushRemoto(exerciseId, { code });
+    }, 1200);
+  }
+
+  // Al iniciar/cerrar sesión: fusiona el progreso local con el de la nube.
+  async function sincronizarConRemoto(user) {
+    usuarioActual = user;
+    if (!user) {
+      // Logout: el progreso local queda como "invitado" en este dispositivo.
+      renderSidebar();
+      return;
+    }
+    let remoto;
+    try {
+      remoto = await window.ProgresoRemoto.cargar();
+    } catch (e) {
+      console.warn("No se pudo cargar progreso de la nube:", e.message || e);
+      return;
+    }
+
+    // Detecta progreso local que aún no está en la nube (para migrarlo).
+    const subirCompletados = Object.keys(estado.completados).filter(
+      (id) => estado.completados[id] && !remoto.completados[id]
+    );
+    const subirCodigo = Object.keys(estado.codigo).filter(
+      (id) => estado.codigo[id] != null && remoto.codigo[id] === undefined
+    );
+
+    // Fusiona: la nube gana donde tiene datos; lo local-only se conserva.
+    estado.completados = { ...estado.completados, ...remoto.completados };
+    estado.codigo = { ...estado.codigo, ...remoto.codigo };
+    guardarProgreso();
+
+    // Sube lo que estaba solo en local (progreso de invitado).
+    const idsASubir = new Set([...subirCompletados, ...subirCodigo]);
+    idsASubir.forEach((id) => {
+      pushRemoto(id, { completed: !!estado.completados[id], code: estado.codigo[id] });
+    });
+
+    renderSidebar();
+    // Si hay un ejercicio abierto, refresca su editor con el código fusionado.
+    if (ejercicioActual && indiceActual >= 0) abrirEjercicio(indiceActual);
+  }
+
   // Un ejercicio está desbloqueado si es el primero o si el anterior ya se
   // completó. Así se avanza "de a poco".
   function estaDesbloqueado(index) {
@@ -257,6 +319,7 @@
     const eraNuevo = !estado.completados[ej.id];
     estado.completados[ej.id] = true;
     guardarProgreso();
+    pushRemoto(ej.id, { completed: true, code: editor.getValue() });
     renderSidebar();
     $("#btnNext").disabled = indiceActual >= ejerciciosPlanos.length - 1;
 
@@ -309,12 +372,20 @@
     renderSidebar();
 
     editor.on("change", () => {
-      // Guardado liviano del código mientras escribe.
+      // Guardado liviano del código mientras escribe (local + nube con debounce).
       if (ejercicioActual) {
-        estado.codigo[ejercicioActual.id] = editor.getValue();
+        const code = editor.getValue();
+        estado.codigo[ejercicioActual.id] = code;
+        pushCodigoDebounced(ejercicioActual.id, code);
       }
     });
-    editor.on("blur", guardarProgreso);
+    editor.on("blur", () => {
+      guardarProgreso();
+      if (ejercicioActual) pushRemoto(ejercicioActual.id, { code: editor.getValue() });
+    });
+
+    // Sincroniza con la nube cuando cambia la sesión (login/logout).
+    if (window.AuthUI) window.AuthUI.onUsuario(sincronizarConRemoto);
 
     $("#btnRun").addEventListener("click", onRun);
     $("#btnCheck").addEventListener("click", onCheck);

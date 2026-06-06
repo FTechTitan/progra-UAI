@@ -21,11 +21,44 @@
         <p class="subtitle">Aprende programando · curso UAI</p>
       </div>
     </div>
-    <div class="progress-global">
-      <div class="bar"><div class="bar-fill" id="progresoGlobal"></div></div>
-      <span id="progresoTexto">0 / 0</span>
+    <div class="topbar-right">
+      <div class="progress-global">
+        <div class="bar"><div class="bar-fill" id="progresoGlobal"></div></div>
+        <span id="progresoTexto">0 / 0</span>
+      </div>
+      <div class="auth-area" id="authArea">
+        <button class="btn btn-secondary btn-sm" id="btnLogin">Entrar / Registrarse</button>
+        <div class="user-chip hidden" id="userChip">
+          <span class="user-email" id="userEmail"></span>
+          <button class="btn-mini" id="btnLogout">Salir</button>
+        </div>
+      </div>
     </div>
   </header>
+
+  <!-- Modal de login / registro -->
+  <div class="modal-overlay hidden" id="authModal">
+    <div class="modal">
+      <button class="modal-close" id="authClose" aria-label="Cerrar">✕</button>
+      <h2 id="authTitulo">Entrá a tu cuenta</h2>
+      <p class="modal-sub">Guardá tu progreso y seguilo desde cualquier dispositivo.</p>
+      <form id="authForm">
+        <label>Email
+          <input type="email" id="authEmail" autocomplete="email" required placeholder="tu@email.com" />
+        </label>
+        <label>Contraseña
+          <input type="password" id="authPassword" autocomplete="current-password" required minlength="6" placeholder="mínimo 6 caracteres" />
+        </label>
+        <p class="auth-error hidden" id="authError"></p>
+        <button type="submit" class="btn btn-primary btn-block" id="authSubmit">Entrar</button>
+      </form>
+      <p class="auth-toggle">
+        <span id="authToggleText">¿No tenés cuenta?</span>
+        <a href="#" id="authToggle">Registrate</a>
+      </p>
+      <p class="auth-skip"><a href="#" id="authSkip">Seguir sin cuenta (solo en este dispositivo)</a></p>
+    </div>
+  </div>
 
   <main class="layout">
     <!-- Barra lateral: módulos y ejercicios -->
@@ -98,9 +131,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
 
+  <!-- Supabase (auth + progreso en la nube) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
   <!-- App -->
   <script src="js/data.js"></script>
   <script src="js/runner.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth-ui.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -61,6 +61,56 @@ body {
 }
 #progresoTexto { font-size: 13px; color: var(--text-dim); white-space: nowrap; }
 
+.topbar-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+
+/* ---------- Auth area (topbar) ---------- */
+.auth-area { display: flex; align-items: center; }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+.user-chip {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  padding: 5px 8px 5px 12px; border-radius: 99px;
+}
+.user-email { font-size: 13px; color: var(--text); max-width: 180px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Modal ---------- */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(5, 7, 12, .72);
+  display: flex; align-items: center; justify-content: center; z-index: 200;
+  backdrop-filter: blur(3px);
+}
+.modal {
+  position: relative; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 28px 28px 22px; width: 380px; max-width: calc(100vw - 32px);
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+}
+.modal h2 { margin: 0 0 4px; font-size: 22px; }
+.modal-sub { margin: 0 0 18px; color: var(--text-dim); font-size: 14px; }
+.modal-close {
+  position: absolute; top: 14px; right: 14px; background: none; border: none;
+  color: var(--text-dim); font-size: 18px; cursor: pointer; line-height: 1;
+}
+.modal-close:hover { color: var(--text); }
+.modal form label {
+  display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 12px;
+}
+.modal form input {
+  display: block; width: 100%; margin-top: 5px; padding: 10px 12px;
+  background: #0c0e14; border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-size: 14px; font-family: var(--font);
+}
+.modal form input:focus { outline: none; border-color: var(--py-blue); }
+.btn-block { width: 100%; margin-top: 6px; }
+.auth-error {
+  color: var(--red); font-size: 13px; margin: 0 0 10px;
+  background: var(--red-soft); padding: 8px 12px; border-radius: 8px;
+}
+.auth-toggle, .auth-skip { text-align: center; font-size: 13px; color: var(--text-dim); margin: 14px 0 0; }
+.auth-skip { margin-top: 8px; }
+.auth-toggle a, .auth-skip a { color: var(--py-blue-light); text-decoration: none; }
+.auth-toggle a:hover, .auth-skip a:hover { text-decoration: underline; }
+
 /* ---------- Layout ---------- */
 .layout {
   display: grid;
