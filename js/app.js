@@ -389,6 +389,13 @@
     // Sincroniza con la nube cuando cambia la sesión (login/logout).
     if (window.AuthUI) window.AuthUI.onUsuario(sincronizarConRemoto);
 
+    // Expone el contexto del ejercicio actual para el asistente de IA.
+    window.AsistenteContexto = () => {
+      if (!ejercicioActual) return {};
+      const enunciado = (ejercicioActual.enunciado || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      return { titulo: ejercicioActual.titulo, enunciado, codigo: editor.getValue() };
+    };
+
     $("#btnRun").addEventListener("click", onRun);
     $("#btnCheck").addEventListener("click", onCheck);
     $("#btnNext").addEventListener("click", onNext);

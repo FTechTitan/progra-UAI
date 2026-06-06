@@ -7,11 +7,11 @@ Estado de despliegue y servicios del proyecto. Última actualización: 2026-06-0
 | URL | Estado | Notas |
 |-----|--------|-------|
 | **https://progra-uai.pages.dev** | ✅ **Activo** (producción) | URL oficial de Cloudflare Pages. Funciona 100%. |
-| https://progra-uai.techforce.cl | ⏳ **Pendiente** | Dominio registrado en el proyecto Pages, falta el CNAME en DNS para activarlo. |
+| **https://progra-uai.techforce.cl** | ✅ **Activo** (2026-06-05) | Custom domain. CNAME → `progra-uai.pages.dev`, proxied. Sirve con cert válido (HTTP 200). |
 
-### Pendiente para activar `progra-uai.techforce.cl`
+### Custom domain `progra-uai.techforce.cl` — configurado
 
-Falta crear el registro **CNAME** en la zona `techforce.cl` de Cloudflare:
+Registro **CNAME** creado en la zona `techforce.cl` de Cloudflare:
 
 ```
 Tipo:    CNAME
@@ -20,10 +20,9 @@ Destino: progra-uai.pages.dev
 Proxy:   ✅ Proxied (naranja)
 ```
 
-> Bloqueo actual: no hay token de DNS de Cloudflare (`CLOUDFLARE_TECHFORCE_API_TOKEN`)
-> en `~/.env.techforce` y el Belt no era alcanzable (Tailscale detenido). El dominio
-> ya está registrado en Pages (`status: pending`, validación por HTTP); en cuanto exista
-> el CNAME, valida y queda activo solo.
+> Creado con `CLOUDFLARE_TECHFORCE_API_TOKEN` (token de DNS pasado en sesión).
+> El dominio ya estaba registrado en el proyecto Pages; al crear el CNAME validó
+> y empezó a servir con HTTP 200 / cert Google en ~1 min.
 
 ## ☁️ Cloudflare Pages
 
@@ -97,6 +96,29 @@ supabase config push --yes
 
 > El progreso de invitado (localStorage) se **migra a la nube** automáticamente
 > la primera vez que el alumno inicia sesión.
+
+## 🤖 Asistente de IA (tutor de Python)
+
+| Campo | Valor |
+|-------|-------|
+| Edge Function | `ask-ai` (Deno) — proxy a OpenAI |
+| Modelo | `gpt-4o-mini` |
+| Secreto | `OPENAI_API_KEY` (Supabase secret, **nunca** en frontend ni repo) |
+| Seguridad | `verify_jwt = true` → **requiere sesión iniciada** (anónimo → 401) |
+| CORS | restringido a los dominios del sitio |
+| Prompt | tutor en español que da pistas y guía, no la solución completa |
+
+El frontend (`js/assistant.js`) llama a la función con `functions.invoke("ask-ai", ...)`
+mandando la pregunta + contexto del ejercicio actual (título, enunciado, código).
+
+```bash
+# re-deploy de la función tras editarla
+supabase functions deploy ask-ai
+# rotar la key de OpenAI
+supabase secrets set OPENAI_API_KEY='sk-...'
+```
+
+> ⚠️ La API key de OpenAI usada inicialmente fue compartida en chat → **rotar**.
 
 ## 🚀 Flujo de actualización
 

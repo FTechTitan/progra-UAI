@@ -131,6 +131,30 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
 
+  <!-- Asistente de IA -->
+  <button class="ai-fab" id="aiFab" title="Asistente de IA" aria-label="Abrir asistente">
+    <span class="ai-fab-icon">🤖</span>
+    <span class="ai-fab-text">Asistente</span>
+  </button>
+
+  <div class="ai-panel hidden" id="aiPanel">
+    <div class="ai-header">
+      <div class="ai-title">🤖 Tutor de Python</div>
+      <button class="ai-close" id="aiClose" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-msg bot">
+        ¡Hola! 👋 Soy tu tutor. Preguntame lo que quieras de Python o del ejercicio
+        en el que estés. Te ayudo con <b>pistas</b> para que aprendas, sin darte todo
+        masticado. 😉
+      </div>
+    </div>
+    <form class="ai-input" id="aiForm">
+      <textarea id="aiText" rows="1" placeholder="Escribí tu pregunta…" autocomplete="off"></textarea>
+      <button type="submit" id="aiSend" aria-label="Enviar">➤</button>
+    </form>
+  </div>
+
   <!-- Supabase (auth + progreso en la nube) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
@@ -140,5 +164,6 @@
   <script src="js/supabase-client.js"></script>
   <script src="js/auth-ui.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/assistant.js"></script>
 </body>
 </html>
