@@ -443,6 +443,285 @@ muestra la lista ordenada con <code>print(lista)</code>.</p>`,
       },
     ],
   },
+
+  // ==========================================================================
+  // MÓDULO 4 — CICLOS ANIDADOS  (Guía 05)
+  // ==========================================================================
+  {
+    id: "anidados",
+    titulo: "Ciclos anidados",
+    emoji: "🔳",
+    intro:
+      "Un <b>ciclo anidado</b> es un ciclo dentro de otro. El ciclo externo " +
+      "repite líneas; el interno repite elementos dentro de cada línea. Sirve " +
+      "para dibujar patrones, tablas y recorrer dos dimensiones.",
+    teoria: `
+<p>Un <code>for</code> dentro de otro <code>for</code>. Por cada vuelta del ciclo
+externo, el interno hace <b>todas</b> sus vueltas:</p>
+<pre><code>for i in range(1, 4):       # externo: 3 filas
+    for j in range(1, 6):   # interno: 5 columnas
+        print("#", end="")  # end="" -> no salta de línea
+    print("")               # salta a la línea siguiente</code></pre>
+<p>Imprime:</p>
+<pre><code>#####
+#####
+#####</code></pre>
+<p>La clave: <code>print("algo", end="")</code> escribe <b>sin</b> saltar de línea,
+y un <code>print("")</code> al final del ciclo interno cierra la fila.</p>`,
+    ejercicios: [
+      {
+        id: "anid-01",
+        titulo: "Rectángulo de #",
+        nivel: 1,
+        enunciado: `
+<p>Pide al usuario el número de <b>filas</b> y de <b>columnas</b> y dibuja un
+rectángulo de símbolos <code>#</code> de ese tamaño. Para 3 filas y 5 columnas:</p>
+<pre><code>#####
+#####
+#####</code></pre>`,
+        pista: 'Ciclo externo = filas, interno = columnas. Usá print("#", end="") y un print("") al cerrar cada fila.',
+        starter: `filas = int(input("Filas: "))
+columnas = int(input("Columnas: "))
+# Tu código acá:
+`,
+        tests: [
+          { stdin: ["3", "5"], expect: ["#####", "#####", "#####"] },
+          { stdin: ["2", "2"], expect: ["##", "##"] },
+        ],
+      },
+      {
+        id: "anid-02",
+        titulo: "Triángulo creciente",
+        nivel: 2,
+        enunciado: `
+<p>Pide un número <b>N</b> y dibuja un triángulo donde la fila <code>i</code> tiene
+<code>i</code> asteriscos. Para N = 4:</p>
+<pre><code>*
+**
+***
+****</code></pre>`,
+        pista: "La fila i tiene i asteriscos: el ciclo interno debe ir de 1 a i.",
+        starter: `n = int(input("N: "))
+# Tu código acá:
+`,
+        tests: [
+          { stdin: ["3"], expect: ["*", "**", "***"] },
+          { stdin: ["4"], expect: ["*", "**", "***", "****"] },
+        ],
+      },
+      {
+        id: "anid-03",
+        titulo: "Escalera de asteriscos",
+        nivel: 2,
+        enunciado: `
+<p>Pide el número de <b>escalones</b> y dibújalos: el escalón <code>i</code> tiene
+<code>2 × i</code> asteriscos. Para 4 escalones:</p>
+<pre><code>**
+****
+******
+********</code></pre>`,
+        pista: "Para el escalón i (de 1 a escalones), imprimí 2*i asteriscos con end=''.",
+        starter: `escalones = int(input("Escalones: "))
+# Tu código acá:
+`,
+        tests: [
+          { stdin: ["4"], expect: ["**", "****", "******", "********"] },
+          { stdin: ["2"], expect: ["**", "****"] },
+        ],
+      },
+      {
+        id: "anid-04",
+        titulo: "Patrón de números",
+        nivel: 3,
+        enunciado: `
+<p>Pide un número <b>N</b> y muestra este patrón (la fila <code>i</code> lista los
+números de 1 a <code>i</code>, separados por un espacio). Para N = 3:</p>
+<pre><code>1
+1 2
+1 2 3</code></pre>`,
+        pista: 'En la fila i, recorré j de 1 a i e imprimí print(j, end=" "). Cerrá con print("").',
+        starter: `n = int(input("N: "))
+# Tu código acá:
+`,
+        tests: [
+          { stdin: ["3"], expect: ["1", "1 2", "1 2 3"] },
+          { stdin: ["4"], expect: ["1", "1 2", "1 2 3", "1 2 3 4"] },
+        ],
+      },
+      {
+        id: "anid-05",
+        titulo: "Tabla de f(x) = suma de k²",
+        nivel: 3,
+        enunciado: `
+<p>Pide un valor <b>inferior</b> y uno <b>superior</b> de x. Para cada x en ese
+rango (ambos incluidos), calcula <code>f(x) = 0² + 1² + ... + x²</code> y muestra
+una línea <code>x f(x)</code>. Ejemplo con inferior 2 y superior 5:</p>
+<pre><code>2 5
+3 14
+4 30
+5 55</code></pre>`,
+        pista: "Ciclo externo recorre x; ciclo interno suma k*k para k de 0 a x. Imprimí print(x, suma).",
+        starter: `inferior = int(input("Inferior: "))
+superior = int(input("Superior: "))
+# Tu código acá:
+`,
+        tests: [
+          { stdin: ["2", "5"], expect: ["2 5", "3 14", "4 30", "5 55"] },
+          { stdin: ["0", "1"], expect: ["0 0", "1 1"] },
+        ],
+      },
+      {
+        id: "anid-06",
+        titulo: "Suma de factoriales",
+        nivel: 4,
+        enunciado: `
+<p>Pide un entero <b>N</b> y calcula la serie
+<code>1! + 2! + 3! + ... + N!</code>. Muestra <code>Suma: X</code>.
+(Para N = 3 da 1 + 2 + 6 = 9.)</p>`,
+        pista: "Ciclo externo i de 1 a N; ciclo interno calcula i! multiplicando de 1 a i; acumulá esos factoriales.",
+        starter: `n = int(input("N: "))
+# Tu código acá:
+`,
+        tests: [
+          { stdin: ["3"], expect: ["Suma: 9"] },
+          { stdin: ["4"], expect: ["Suma: 33"] },
+          { stdin: ["1"], expect: ["Suma: 1"] },
+        ],
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // MÓDULO 5 — MATRICES (listas 2D)
+  // ==========================================================================
+  {
+    id: "matrices",
+    titulo: "Matrices",
+    emoji: "🔢",
+    intro:
+      "Una <b>matriz</b> es una lista de listas (2 dimensiones): tiene filas y " +
+      "columnas. Se accede a cada dato con dos índices: <code>M[i][j]</code> " +
+      "(fila <code>i</code>, columna <code>j</code>).",
+    teoria: `
+<p>Crear y acceder:</p>
+<pre><code>M = [[1, 2, 3],
+     [4, 5, 6]]
+print(M[0][0])   # 1   (fila 0, columna 0)
+print(M[1][2])   # 6   (fila 1, columna 2)
+M[0][1] = 99     # modifica un elemento</code></pre>
+<p>Tamaño:</p>
+<pre><code>len(M)      # 2  -> número de filas
+len(M[0])   # 3  -> número de columnas de la fila 0</code></pre>
+<p>Recorrer con <b>ciclos dobles</b>:</p>
+<pre><code>for i in range(len(M)):
+    for j in range(len(M[i])):
+        print(M[i][j])</code></pre>`,
+    ejercicios: [
+      {
+        id: "mat-01",
+        titulo: "Dimensiones de la matriz",
+        nivel: 1,
+        enunciado: `
+<p>Tenés esta matriz ya creada:</p>
+<pre><code>M = [[1, 2, 3], [4, 5, 6]]</code></pre>
+<p>Muestra cuántas filas y columnas tiene, con el formato:</p>
+<pre><code>Filas: 2
+Columnas: 3</code></pre>`,
+        pista: "len(M) son las filas; len(M[0]) son las columnas de la primera fila.",
+        starter: `M = [[1, 2, 3], [4, 5, 6]]
+# Tu código acá:
+`,
+        tests: [{ stdin: [], expect: ["Filas: 2", "Columnas: 3"] }],
+      },
+      {
+        id: "mat-02",
+        titulo: "Suma de todos los elementos",
+        nivel: 2,
+        enunciado: `
+<p>Suma <b>todos</b> los elementos de esta matriz y muestra <code>Suma: X</code>:</p>
+<pre><code>M = [[1, 2], [3, 4], [5, 6]]</code></pre>
+<p>(El resultado es 21.)</p>`,
+        pista: "Acumulá en una variable recorriendo con dos for: suma = suma + M[i][j].",
+        starter: `M = [[1, 2], [3, 4], [5, 6]]
+# Tu código acá:
+`,
+        tests: [{ stdin: [], expect: ["Suma: 21"] }],
+      },
+      {
+        id: "mat-03",
+        titulo: "Promedio por fila",
+        nivel: 2,
+        enunciado: `
+<p>Para esta matriz de notas, calcula el <b>promedio de cada fila</b> y muéstralo
+con el formato <code>Fila i promedio: X</code> (una línea por fila):</p>
+<pre><code>notas = [[7, 6, 5], [4, 5, 6], [1, 2, 3]]</code></pre>
+<p>Por ejemplo, la primera fila debe mostrar <code>Fila 0 promedio: 6.0</code>.</p>`,
+        pista: 'Para cada fila i (que es la lista notas[i]) usá sum(notas[i]) / len(notas[i]). Imprimí con print("Fila", i, "promedio:", promedio).',
+        starter: `notas = [[7, 6, 5], [4, 5, 6], [1, 2, 3]]
+# Tu código acá:
+`,
+        tests: [
+          {
+            stdin: [],
+            expect: [
+              "Fila 0 promedio: 6.0",
+              "Fila 1 promedio: 5.0",
+              "Fila 2 promedio: 2.0",
+            ],
+          },
+        ],
+      },
+      {
+        id: "mat-04",
+        titulo: "El número mayor",
+        nivel: 3,
+        enunciado: `
+<p>Encuentra el <b>elemento más grande</b> de esta matriz y muéstralo como
+<code>Maximo: X</code>:</p>
+<pre><code>M = [[3, 8, 1], [9, 2, 7]]</code></pre>`,
+        pista: "Guardá un 'mayor' con el primer elemento y comparalo con cada M[i][j] recorriendo la matriz.",
+        starter: `M = [[3, 8, 1], [9, 2, 7]]
+# Tu código acá:
+`,
+        tests: [{ stdin: [], expect: ["Maximo: 9"] }],
+      },
+      {
+        id: "mat-05",
+        titulo: "Suma de la diagonal",
+        nivel: 3,
+        enunciado: `
+<p>En esta matriz <b>cuadrada</b>, suma la <b>diagonal principal</b> (los elementos
+<code>M[0][0]</code>, <code>M[1][1]</code>, <code>M[2][2]</code>) y muestra
+<code>Diagonal: X</code>:</p>
+<pre><code>M = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]</code></pre>
+<p>(La diagonal suma 1 + 5 + 9 = 15.)</p>`,
+        pista: "La diagonal son los M[i][i]: un solo for con range(len(M)) y sumás M[i][i].",
+        starter: `M = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+# Tu código acá:
+`,
+        tests: [{ stdin: [], expect: ["Diagonal: 15"] }],
+      },
+      {
+        id: "mat-06",
+        titulo: "Matriz identidad",
+        nivel: 4,
+        enunciado: `
+<p>Pide un entero <b>N</b> y construí la <b>matriz identidad</b> de N×N (1 en la
+diagonal, 0 en el resto), guardándola en una lista de listas. Muéstrala con
+<code>print(M)</code>. Para N = 3:</p>
+<pre><code>[[1, 0, 0], [0, 1, 0], [0, 0, 1]]</code></pre>`,
+        pista: "Por cada fila i creá una lista de N ceros y poné un 1 en la posición i (fila[i] = 1); luego append a M.",
+        starter: `n = int(input("N: "))
+M = []
+# Tu código acá:
+`,
+        tests: [
+          { stdin: ["3"], expect: ["[[1, 0, 0], [0, 1, 0], [0, 0, 1]]"] },
+          { stdin: ["2"], expect: ["[[1, 0], [0, 1]]"] },
+        ],
+      },
+    ],
+  },
 ];
 
 // Expuesto globalmente para los otros scripts (sin módulos ES, todo via <script>)
