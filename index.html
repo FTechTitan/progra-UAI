@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python de a poco · progra-UAI</title>
+  <meta name="description" content="Aprende Python paso a paso con ejercicios de menos a más, corregidos automáticamente en tu navegador." />
+
+  <!-- CodeMirror 5 (editor de código) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🐍</span>
+      <div>
+        <h1>Python de a poco</h1>
+        <p class="subtitle">Aprende programando · curso UAI</p>
+      </div>
+    </div>
+    <div class="progress-global">
+      <div class="bar"><div class="bar-fill" id="progresoGlobal"></div></div>
+      <span id="progresoTexto">0 / 0</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Barra lateral: módulos y ejercicios -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- Panel del ejercicio -->
+    <section class="workspace" id="workspace">
+      <div class="welcome" id="welcome">
+        <h2>¡Bienvenido/a! 👋</h2>
+        <p>Acá vas a aprender Python <b>de a poco</b>, haciendo ejercicios reales
+        que se corrigen solos. Empezá por el primer módulo en la izquierda.</p>
+        <ul class="welcome-list">
+          <li>📝 Leé el enunciado y escribí tu solución en el editor.</li>
+          <li>▶️ Tocá <b>Ejecutar</b> para probar tu código.</li>
+          <li>✅ Tocá <b>Comprobar</b> para ver si pasa todos los casos.</li>
+          <li>🔓 Al completar ejercicios se desbloquean los siguientes.</li>
+        </ul>
+        <p class="loading-note" id="pyStatus">Cargando Python en el navegador…</p>
+      </div>
+
+      <div class="exercise hidden" id="exercise">
+        <div class="exercise-header">
+          <div>
+            <span class="badge" id="exModulo"></span>
+            <span class="badge nivel" id="exNivel"></span>
+          </div>
+          <h2 id="exTitulo"></h2>
+        </div>
+
+        <div class="exercise-body">
+          <div class="statement" id="exEnunciado"></div>
+          <details class="hint">
+            <summary>💡 Pista</summary>
+            <p id="exPista"></p>
+          </details>
+        </div>
+
+        <div class="editor-zone">
+          <div class="editor-toolbar">
+            <span>tu_solucion.py</span>
+            <button class="btn-mini" id="btnReset" title="Volver al código inicial">↺ Reiniciar</button>
+          </div>
+          <textarea id="editor"></textarea>
+
+          <details class="stdin-box">
+            <summary>⌨️ Entrada manual (opcional, para Ejecutar)</summary>
+            <p class="hint-text">Una línea por cada <code>input()</code>. Si lo dejás vacío, se te preguntará en una ventanita.</p>
+            <textarea id="stdin" placeholder="Ej:&#10;5&#10;10"></textarea>
+          </details>
+
+          <div class="actions">
+            <button class="btn btn-secondary" id="btnRun">▶️ Ejecutar</button>
+            <button class="btn btn-primary" id="btnCheck">✅ Comprobar</button>
+            <button class="btn btn-ghost" id="btnNext" disabled>Siguiente →</button>
+          </div>
+        </div>
+
+        <div class="output-zone">
+          <h3>Resultado</h3>
+          <pre id="output" class="output">Tocá «Ejecutar» o «Comprobar» para ver la salida.</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Pyodide -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <!-- CodeMirror 5 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+
+  <!-- App -->
+  <script src="js/data.js"></script>
+  <script src="js/runner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

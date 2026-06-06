@@ -1,0 +1,244 @@
+/* ===========================================================================
+   styles.css — Python de a poco
+   Paleta inspirada en los colores oficiales de Python (azul/amarillo) sobre
+   un fondo oscuro cómodo para programar.
+   =========================================================================== */
+
+:root {
+  --bg: #0f1117;
+  --bg-soft: #171a23;
+  --bg-card: #1c2030;
+  --border: #2a3040;
+  --text: #e6e9f0;
+  --text-dim: #9aa3b6;
+  --py-blue: #4b8bbe;
+  --py-blue-light: #5fa8e0;
+  --py-yellow: #ffd43b;
+  --green: #3fb950;
+  --green-soft: #1f3a26;
+  --red: #f85149;
+  --red-soft: #3a1f1f;
+  --radius: 10px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", "Fira Code", "JetBrains Mono", Consolas, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+}
+
+/* ---------- Topbar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo { font-size: 32px; }
+.topbar h1 { margin: 0; font-size: 20px; letter-spacing: -0.3px; }
+.subtitle { margin: 0; font-size: 13px; color: var(--text-dim); }
+
+.progress-global { display: flex; align-items: center; gap: 10px; min-width: 200px; }
+.progress-global .bar {
+  flex: 1; height: 8px; background: var(--bg-card);
+  border-radius: 99px; overflow: hidden; min-width: 120px;
+}
+.progress-global .bar-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--py-blue), var(--py-yellow));
+  transition: width .4s ease;
+}
+#progresoTexto { font-size: 13px; color: var(--text-dim); white-space: nowrap; }
+
+/* ---------- Layout ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  min-height: calc(100vh - 64px);
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  background: var(--bg-soft);
+  border-right: 1px solid var(--border);
+  padding: 16px 12px;
+  overflow-y: auto;
+}
+.modulo { margin-bottom: 20px; }
+.modulo-header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .5px; color: var(--text-dim);
+  padding: 6px 8px;
+}
+.modulo-header .emoji { font-size: 18px; }
+.modulo-progress { margin-left: auto; font-size: 11px; }
+
+.ej-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px; cursor: pointer;
+  font-size: 14px; color: var(--text); transition: background .15s;
+  border: 1px solid transparent;
+}
+.ej-item:hover { background: var(--bg-card); }
+.ej-item.activo { background: var(--bg-card); border-color: var(--py-blue); }
+.ej-item.bloqueado { opacity: .45; cursor: not-allowed; }
+.ej-item .estado { font-size: 15px; width: 18px; text-align: center; }
+.ej-item .nombre { flex: 1; }
+.ej-item .nivel-dots { font-size: 10px; color: var(--py-yellow); letter-spacing: -1px; }
+
+/* ---------- Workspace ---------- */
+.workspace { padding: 24px 28px; overflow-y: auto; max-width: 920px; }
+.hidden { display: none !important; }
+
+.welcome { max-width: 640px; }
+.welcome h2 { margin-top: 0; }
+.welcome-list { list-style: none; padding: 0; }
+.welcome-list li {
+  padding: 10px 14px; background: var(--bg-card);
+  border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border);
+}
+.loading-note {
+  margin-top: 20px; padding: 10px 14px; border-radius: 8px;
+  background: var(--green-soft); color: var(--text); font-size: 14px;
+  border: 1px solid var(--border);
+}
+
+/* ---------- Exercise ---------- */
+.exercise-header { margin-bottom: 16px; }
+.exercise-header h2 { margin: 8px 0 0; font-size: 24px; }
+.badge {
+  display: inline-block; font-size: 12px; font-weight: 600;
+  padding: 3px 10px; border-radius: 99px; background: var(--bg-card);
+  border: 1px solid var(--border); color: var(--text-dim); margin-right: 6px;
+}
+.badge.nivel { color: var(--py-yellow); border-color: #3a3520; }
+
+.statement {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px; margin-bottom: 12px;
+}
+.statement p:first-child { margin-top: 0; }
+.statement p:last-child { margin-bottom: 0; }
+.statement code, .hint-text code {
+  background: #0c0e14; padding: 1px 6px; border-radius: 5px;
+  font-family: var(--mono); font-size: 13px; color: var(--py-yellow);
+}
+.statement pre {
+  background: #0c0e14; padding: 12px 14px; border-radius: 8px;
+  overflow-x: auto; border: 1px solid var(--border);
+}
+.statement pre code { background: none; color: var(--py-blue-light); padding: 0; }
+
+.hint { margin-bottom: 18px; }
+.hint summary {
+  cursor: pointer; font-size: 14px; color: var(--py-yellow);
+  user-select: none; padding: 6px 0;
+}
+.hint p { margin: 6px 0 0; color: var(--text-dim); font-size: 14px; }
+
+/* ---------- Editor ---------- */
+.editor-zone {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 18px;
+}
+.editor-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg-soft); padding: 8px 14px; font-size: 13px;
+  color: var(--text-dim); font-family: var(--mono);
+  border-bottom: 1px solid var(--border);
+}
+.btn-mini {
+  background: none; border: 1px solid var(--border); color: var(--text-dim);
+  padding: 3px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;
+}
+.btn-mini:hover { color: var(--text); border-color: var(--py-blue); }
+
+.CodeMirror {
+  height: auto; min-height: 180px; font-family: var(--mono) !important;
+  font-size: 14px; line-height: 1.6;
+}
+.CodeMirror-scroll { min-height: 180px; }
+
+.stdin-box { border-top: 1px solid var(--border); background: var(--bg-soft); }
+.stdin-box summary {
+  cursor: pointer; padding: 8px 14px; font-size: 13px; color: var(--text-dim);
+  user-select: none;
+}
+.stdin-box .hint-text { padding: 0 14px; margin: 4px 0; font-size: 12px; color: var(--text-dim); }
+#stdin {
+  width: calc(100% - 28px); margin: 4px 14px 12px; min-height: 56px;
+  background: #0c0e14; color: var(--text); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 10px; font-family: var(--mono); font-size: 13px;
+  resize: vertical;
+}
+
+/* ---------- Actions ---------- */
+.actions {
+  display: flex; gap: 10px; padding: 12px 14px;
+  background: var(--bg-soft); border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.btn {
+  border: none; padding: 9px 18px; border-radius: 8px; cursor: pointer;
+  font-size: 14px; font-weight: 600; transition: transform .08s, filter .15s;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn-primary { background: var(--green); color: #08130a; }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+.btn-secondary { background: var(--py-blue); color: #04121d; }
+.btn-secondary:hover:not(:disabled) { filter: brightness(1.1); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-ghost:hover:not(:disabled) { border-color: var(--py-blue); }
+
+/* ---------- Output ---------- */
+.output-zone h3 { font-size: 15px; margin: 0 0 8px; }
+.output {
+  background: #0c0e14; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; font-family: var(--mono); font-size: 13.5px;
+  white-space: pre-wrap; word-break: break-word; min-height: 60px;
+  color: var(--text); margin: 0;
+}
+.output.ok { border-color: var(--green); }
+.output.fail { border-color: var(--red); }
+.output .ok-line { color: var(--green); }
+.output .fail-line { color: var(--red); }
+.output .err-line { color: var(--red); }
+.output .dim { color: var(--text-dim); }
+
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--green); color: #08130a; padding: 12px 24px;
+  border-radius: 99px; font-weight: 700; box-shadow: 0 8px 30px rgba(0,0,0,.4);
+  animation: pop .3s ease; z-index: 100;
+}
+@keyframes pop { from { transform: translateX(-50%) scale(.85); opacity: 0; } }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar {
+    border-right: none; border-bottom: 1px solid var(--border);
+    max-height: 240px;
+  }
+  .workspace { padding: 18px; }
+}
+
+.spinner {
+  display: inline-block; width: 14px; height: 14px; border: 2px solid var(--text-dim);
+  border-top-color: var(--py-blue); border-radius: 50%;
+  animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
