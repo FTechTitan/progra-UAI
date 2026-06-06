@@ -567,6 +567,30 @@
       return { id: ejercicioActual.id, titulo: ejercicioActual.titulo, enunciado, codigo: editor.getValue() };
     };
 
+    // Permite que el tutor por voz (ConvAI) escriba código en el editor.
+    // Devuelve un mensaje de estado que el agente puede leer en voz.
+    window.EscribirEnEditor = (codigo) => {
+      if (!codigo || !String(codigo).trim()) return "No recibí código para escribir.";
+      if (!editor || exercise.classList.contains("hidden")) {
+        return "El alumno no tiene ningún ejercicio abierto. Pedile que abra un ejercicio primero.";
+      }
+      editor.setValue(String(codigo));
+      setTimeout(() => editor.refresh(), 0);
+      if (ejercicioActual) {
+        estado.codigo[ejercicioActual.id] = String(codigo);
+        guardarProgreso();
+        pushCodigoDebounced(ejercicioActual.id, String(codigo));
+      }
+      // Pequeño resalte para que el alumno note el cambio.
+      try {
+        const wrap = editor.getWrapperElement();
+        wrap.style.transition = "box-shadow .3s";
+        wrap.style.boxShadow = "0 0 0 2px var(--py-yellow)";
+        setTimeout(() => { wrap.style.boxShadow = ""; }, 1200);
+      } catch (_) {}
+      return "Listo, escribí el código en el editor del alumno.";
+    };
+
     $("#btnRun").addEventListener("click", onRun);
     $("#btnCheck").addEventListener("click", onCheck);
     $("#btnNext").addEventListener("click", onNext);
