@@ -512,11 +512,18 @@ body {
   padding: 14px 16px; background: var(--bg-card); border-bottom: 1px solid var(--border);
 }
 .ai-title { font-weight: 700; font-size: 15px; }
+.ai-head-btns { display: flex; gap: 4px; }
+.ai-header { cursor: move; }
 .ai-close {
   background: none; border: none; color: var(--text-dim);
-  font-size: 17px; cursor: pointer;
+  font-size: 17px; cursor: pointer; width: 26px; line-height: 1;
 }
 .ai-close:hover { color: var(--text); }
+
+/* Estado minimizado: solo la barra de título */
+.ai-panel.min { height: auto !important; }
+.ai-panel.min .ai-messages,
+.ai-panel.min .ai-input { display: none; }
 
 .ai-messages {
   flex: 1; overflow-y: auto; padding: 16px; display: flex;
