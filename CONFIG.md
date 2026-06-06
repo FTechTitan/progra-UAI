@@ -120,6 +120,31 @@ supabase secrets set OPENAI_API_KEY='sk-...'
 
 > ⚠️ La API key de OpenAI usada inicialmente fue compartida en chat → **rotar**.
 
+## 🛠 Panel de superadmin
+
+| Campo | Valor |
+|-------|-------|
+| Edge Function | `admin` (Deno) — `verify_jwt = true` |
+| Autorización | doble: gateway (JWT válido) + chequeo server-side de `app_metadata.role === "admin"` |
+| Acceso a datos | `service_role` (inyectada por Supabase, **solo** en la función) — bypassa RLS |
+| Frontend | `js/admin.js` — el botón "🛠 Admin" solo aparece si tu sesión es admin |
+
+**Acciones**: `overview` (stats + alumnos + completados por ejercicio),
+`user_detail` (progreso + código de un alumno), `reset_user` (borra su progreso),
+`delete_user` (elimina la cuenta).
+
+**Admin actual**: `fraanciscoponce@gmail.com`.
+
+```sql
+-- dar/quitar admin a un usuario (rol en app_metadata, NO en user_metadata)
+update auth.users
+set raw_app_meta_data = coalesce(raw_app_meta_data,'{}'::jsonb) || '{"role":"admin"}'::jsonb
+where email = 'alguien@mail.com';
+```
+
+> Verificado: alumno normal → **403**; admin → ve todo. La `service_role` nunca
+> sale del backend.
+
 ## 🚀 Flujo de actualización
 
 ```bash

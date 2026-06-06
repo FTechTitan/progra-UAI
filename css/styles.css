@@ -304,6 +304,77 @@ body {
   .workspace { padding: 18px; }
 }
 
+/* ---------- Botón Admin (topbar) ---------- */
+.btn-admin {
+  background: linear-gradient(135deg, #e056fd, #686de0); color: #fff;
+  border: none; border-radius: 8px; padding: 6px 14px; font-size: 13px;
+  font-weight: 700; cursor: pointer; margin-right: 8px;
+}
+.btn-admin:hover { filter: brightness(1.1); }
+
+/* ---------- Panel Admin (overlay completo) ---------- */
+.admin-overlay {
+  position: fixed; inset: 0; background: var(--bg); z-index: 300;
+  overflow-y: auto; padding: 0;
+}
+.admin-top {
+  position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 28px; background: var(--bg-soft); border-bottom: 1px solid var(--border);
+  z-index: 2;
+}
+.admin-top h2 { margin: 0; font-size: 20px; }
+.admin-body { padding: 24px 28px; max-width: 1100px; margin: 0 auto; }
+
+.admin-cards { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
+.admin-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 22px; min-width: 160px;
+}
+.admin-card .num { font-size: 30px; font-weight: 800; color: var(--py-yellow); }
+.admin-card .lbl { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
+
+.admin-section-title { font-size: 15px; font-weight: 700; margin: 24px 0 12px; }
+
+.ex-bars { display: flex; flex-direction: column; gap: 8px; }
+.ex-bar-row { display: grid; grid-template-columns: 160px 1fr 40px; align-items: center; gap: 10px; font-size: 13px; }
+.ex-bar-track { background: var(--bg-card); border-radius: 99px; height: 12px; overflow: hidden; }
+.ex-bar-fill { height: 100%; background: linear-gradient(90deg, var(--py-blue), var(--py-yellow)); }
+
+.admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.admin-table th, .admin-table td {
+  text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border);
+}
+.admin-table th { color: var(--text-dim); font-weight: 600; font-size: 12px; text-transform: uppercase; }
+.admin-table tr:hover td { background: var(--bg-soft); }
+.admin-table .acciones { display: flex; gap: 6px; }
+.tag-admin { background: #3a2456; color: #e056fd; border: 1px solid #5a3a82;
+  font-size: 11px; padding: 1px 7px; border-radius: 99px; }
+.btn-row {
+  background: var(--bg-card); border: 1px solid var(--border); color: var(--text);
+  border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer;
+}
+.btn-row:hover { border-color: var(--py-blue); }
+.btn-row.danger:hover { border-color: var(--red); color: var(--red); }
+
+.admin-loading { color: var(--text-dim); padding: 30px; text-align: center; }
+
+/* Detalle de usuario */
+.admin-detail {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px; margin-top: 16px;
+}
+.detail-ex {
+  border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden;
+}
+.detail-ex summary {
+  cursor: pointer; padding: 8px 12px; background: var(--bg-soft); font-size: 13px;
+  display: flex; gap: 8px; align-items: center;
+}
+.detail-ex pre {
+  margin: 0; padding: 12px; background: #0c0e14; font-family: var(--mono);
+  font-size: 12.5px; color: var(--py-blue-light); overflow-x: auto;
+}
+
 /* ---------- Asistente de IA ---------- */
 .ai-fab {
   position: fixed; bottom: 22px; right: 22px; z-index: 150;
