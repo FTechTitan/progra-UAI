@@ -15,11 +15,16 @@
     widget.addEventListener("elevenlabs-convai:call", (event) => {
       try {
         event.detail.config.clientTools = {
-          // Debe coincidir con el nombre de la tool creada en el agente.
+          // Escribe código en la pizarra flotante.
           escribir_codigo: async (params) => {
             const codigo = params && (params.codigo ?? params.code ?? "");
-            if (window.EscribirEnEditor) return window.EscribirEnEditor(codigo);
-            return "No encontré el editor en la página.";
+            if (window.Pizarra) return window.Pizarra.escribir(codigo);
+            return "No encontré la pizarra en la página.";
+          },
+          // Lee lo que el alumno escribió en la pizarra.
+          leer_codigo: async () => {
+            if (window.Pizarra) return window.Pizarra.leer();
+            return "No encontré la pizarra en la página.";
           },
         };
       } catch (e) {
