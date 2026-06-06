@@ -221,6 +221,24 @@ body {
 }
 .CodeMirror-scroll { min-height: 180px; }
 
+/* Columna de números de línea (gutter): ancho propio + separación del código */
+.CodeMirror-gutters {
+  background: #14161e;
+  border-right: 1px solid var(--border);
+  width: 44px;
+}
+.CodeMirror-linenumbers { width: 44px; }
+.CodeMirror-linenumber {
+  color: var(--text-dim);
+  padding: 0 10px 0 6px;     /* aire entre el número y el código */
+  min-width: 28px;
+  text-align: right;
+}
+/* El texto del código arranca después del gutter, no debajo */
+.CodeMirror-lines { padding: 8px 0; }
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like { padding-left: 10px; }
+
 .stdin-box { border-top: 1px solid var(--border); background: var(--bg-soft); }
 .stdin-box summary {
   cursor: pointer; padding: 8px 14px; font-size: 13px; color: var(--text-dim);

@@ -209,6 +209,8 @@
     // Restaura el código guardado del alumno o el starter del ejercicio.
     const guardado = estado.codigo[ej.id];
     editor.setValue(guardado != null ? guardado : ej.starter || "");
+    // Recalcula el ancho del gutter (números de línea) para que no tape el código.
+    setTimeout(() => editor.refresh(), 0);
 
     $("#stdin").value = "";
     outputEl.className = "output";
